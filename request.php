@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["OPERATION"])) {
           $payload = makeUserTokenPayload($user, time() + TOKEN_LIFETIME);
           $access_token = generateAccessToken(ALGO, payloadArrayToBase64($payload), SECRET_KEY);
           array_pop($payload); // remove validator
-          setcookie(COOKIE_NAME, implode(".", [$access_token, payloadArrayToBase64($payload)]), 0, "/", "localhost", FALSE, TRUE);
+          setcookie(COOKIE_NAME, implode(".", [$access_token, payloadArrayToBase64($payload)]), 0, "/", $_SERVER["SERVER_NAME"], FALSE, TRUE);
         }
       }
       break;

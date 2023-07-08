@@ -1,7 +1,7 @@
 <?php
-  require_once(realpath(__DIR__) . DIRECTORY_SEPARATOR . "hmac.php");
+  require_once(realpath(__DIR__ . DIRECTORY_SEPARATOR . "hmac.php"));
   initilize();
-  require_once(realpath(__DIR__) . DIRECTORY_SEPARATOR . "request.php");
+  require_once(realpath(__DIR__ . DIRECTORY_SEPARATOR . "request.php"));
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +22,10 @@
         body: formData
       })
       .then((res) => {
+        if (res.headers.get('Authorization')) {
+          document.getElementById('access_token').value = res.headers.get('Authorization');
+          document.getElementById('access_token_info').value = JSON.stringify(JSON.parse(atob(res.headers.get('Authorization').split('.')[1], null, 2)), null, 2);
+        }
         return res.json();
       })
       .then((json) => {
@@ -61,6 +65,7 @@
       })
       .then((json) => {
         document.getElementById('access_token').value = json.access_token;
+        document.getElementById('access_token_info').value = JSON.stringify(JSON.parse(atob(json.access_token.split('.')[1], null, 2)), null, 2);
         document.getElementById('result').value = '';
       })
       .catch((error) => {
@@ -78,8 +83,11 @@
       </form>
       <br>
       <div style="display:flex;flex-direction:row;">
-        <textarea rows="15" id="access_token" style="margin-right:10px;min-width:200px;"></textarea>
-        <textarea rows="15" id="result" style="min-width:200px;" disabled></textarea>
+        <div style="display:flex;flex-direction:column;margin-right:10px;min-width:300px;">
+          <textarea rows="9" id="access_token"></textarea>
+          <textarea rows="5" id="access_token_info" style="margin-top:20px;"></textarea>
+        </div>
+        <textarea rows="15" id="result" style="min-width:300px;" disabled></textarea>
       </div>
       <br>
       <button onclick="makeApiRequest();">MAKE REQUEST USING ACCESS TOKEN</button>
